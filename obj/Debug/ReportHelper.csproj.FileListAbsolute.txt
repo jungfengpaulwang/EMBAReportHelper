@@ -1,0 +1,10 @@
+E:\TFServer2013\Research\A-Team\ReportHelper\bin\Debug\ReportHelper.dll.config
+E:\TFServer2013\Research\A-Team\ReportHelper\bin\Debug\ReportHelper.XML
+E:\TFServer2013\Research\A-Team\ReportHelper\bin\Debug\ReportHelper.dll
+E:\TFServer2013\Research\A-Team\ReportHelper\bin\Debug\ReportHelper.pdb
+E:\TFServer2013\ischoolteam\ischool_EMBA\FiscaRuntime\addmodules\ReportHelper\ReportHelper.dll.config
+E:\TFServer2013\ischoolteam\ischool_EMBA\FiscaRuntime\addmodules\ReportHelper\ReportHelper.dll
+E:\TFServer2013\ischoolteam\ischool_EMBA\FiscaRuntime\addmodules\ReportHelper\ReportHelper.pdb
+E:\TFServer2013\ischoolteam\ischool_EMBA\FiscaRuntime\addmodules\ReportHelper\ReportHelper.XML
+E:\TFServer2013\Research\A-Team\ReportHelper\obj\Debug\ReportHelper.dll
+E:\TFServer2013\Research\A-Team\ReportHelper\obj\Debug\ReportHelper.pdb
