@@ -8,3 +8,13 @@ E:\TFServer2013\ischoolteam\ischool_EMBA\FiscaRuntime\addmodules\ReportHelper\Re
 E:\TFServer2013\ischoolteam\ischool_EMBA\FiscaRuntime\addmodules\ReportHelper\ReportHelper.XML
 E:\TFServer2013\Research\A-Team\ReportHelper\obj\Debug\ReportHelper.dll
 E:\TFServer2013\Research\A-Team\ReportHelper\obj\Debug\ReportHelper.pdb
+E:\ischool source\EMBARuntime\addmodules\ReportHelper\ReportHelper.dll.config
+E:\ischool source\EMBARuntime\addmodules\ReportHelper\ReportHelper.dll
+E:\ischool source\EMBARuntime\addmodules\ReportHelper\ReportHelper.pdb
+E:\ischool source\EMBARuntime\addmodules\ReportHelper\ReportHelper.XML
+E:\github\NTU_EMBA\ReportHelper\bin\Debug\ReportHelper.dll.config
+E:\github\NTU_EMBA\ReportHelper\bin\Debug\ReportHelper.XML
+E:\github\NTU_EMBA\ReportHelper\bin\Debug\ReportHelper.dll
+E:\github\NTU_EMBA\ReportHelper\bin\Debug\ReportHelper.pdb
+E:\github\NTU_EMBA\ReportHelper\obj\Debug\ReportHelper.dll
+E:\github\NTU_EMBA\ReportHelper\obj\Debug\ReportHelper.pdb
