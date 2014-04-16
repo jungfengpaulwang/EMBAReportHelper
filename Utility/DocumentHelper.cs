@@ -385,6 +385,156 @@ namespace ReportHelper
             return variableCollection;
         }
 
+        public static void PutValue(Cell cell, string value, Type type)
+        {
+            if (Type.GetType("System.Int32") == type)
+            {
+                int bValue;
+                if (int.TryParse(value, out bValue))
+                    cell.PutValue(bValue);
+                else
+                    cell.PutValue(value);
+
+                return;
+            }
+
+            if ((DateTime.Today).GetType() == type)
+            {
+                DateTime bValue;
+                if (DateTime.TryParse(value, out bValue))
+                    cell.PutValue(bValue);
+                else
+                    cell.PutValue(value);
+
+                return;
+            }
+
+            if (Type.GetType("System.Double") == type)
+            {
+                double bValue;
+                if (double.TryParse(value, out bValue))
+                    cell.PutValue(bValue);
+                else
+                    cell.PutValue(value);
+
+                return;
+            }
+
+            if (true.GetType() == type)
+            {
+                bool bValue;
+                if (bool.TryParse(value, out bValue))
+                    cell.PutValue(bValue);
+                else
+                    cell.PutValue(value);
+
+                return;
+            }
+
+            cell.PutValue(value);
+        }
+
+        private static void SetCellStyle(Aspose.Cells.Worksheet instanceSheet, Aspose.Cells.Cell cell, CellStyle cell_style)
+        {
+            //  粗體
+            if (cell_style.Bold.HasValue)
+                instanceSheet.Cells[cell.Row, cell.Column].Style.Font.IsBold = cell_style.Bold.Value;
+            //  底線
+            if (cell_style.Underline.HasValue)
+            {
+                if (cell_style.Underline.Value)
+                    instanceSheet.Cells[cell.Row, cell.Column].Style.Font.Underline = FontUnderlineType.Single;
+                else
+                    instanceSheet.Cells[cell.Row, cell.Column].Style.Font.Underline = FontUnderlineType.None;
+            }
+            //  字體名稱
+            if (!string.IsNullOrEmpty(cell_style.FontName))
+                instanceSheet.Cells[cell.Row, cell.Column].Style.Font.Name = cell_style.FontName;
+            //  字體大小
+            if (cell_style.FontSize.HasValue)
+                instanceSheet.Cells[cell.Row, cell.Column].Style.Font.Size = cell_style.FontSize.Value;
+            //  水平位置
+            if (cell_style.HAlignment.HasValue)
+                instanceSheet.Cells[cell.Row, cell.Column].Style.HorizontalAlignment = cell_style.HAlignment.Value;
+            //  垂直位置
+            if (cell_style.VAlignment.HasValue)
+                instanceSheet.Cells[cell.Row, cell.Column].Style.VerticalAlignment = cell_style.VAlignment.Value;
+            //  列高
+            if (cell_style.RowHeight.HasValue)
+                instanceSheet.Cells.SetRowHeight(cell.Row, cell_style.RowHeight.Value);
+            //  合併儲存格
+            if (cell_style.MergeObject != null)
+            {
+                instanceSheet.Cells.Merge(cell.Row, cell.Column, cell_style.MergeObject.row_length, cell_style.MergeObject.column_length);
+            }
+            //  自動調整列高
+            if (cell_style.AutoFitRow.HasValue && cell_style.AutoFitRow.Value)
+            {
+                if (cell_style.MergeObject != null)
+                {
+                    Range merged_Range = cell.GetMergedRange();
+                    if (merged_Range != null)
+                    {
+                        double column_width = 0.0f;
+                        string content = string.Empty;
+                        for (int c = 0; c < merged_Range.ColumnCount; c++)
+                        {
+                            column_width += merged_Range.Worksheet.Cells.GetColumnWidth(merged_Range.FirstColumn + c);
+                        }
+                        content = (cell.Value + "").Replace(" ", "_");
+                        double row_height_after = SandBox.Instance.GetFitedRowHeight(content, column_width) * 10 / 7.5;
+                        instanceSheet.Cells.SetRowHeight(cell.Row, row_height_after > 409 ? 409 : row_height_after);
+
+                        Style style = cell.Style;
+                        style.IsTextWrapped = true;
+                        StyleFlag sf = new StyleFlag();
+                        sf.All = true;
+                        merged_Range.ApplyStyle(style, sf);
+                    }
+                }
+                else
+                {
+                    instanceSheet.Cells[cell.Row, cell.Column].Style.IsTextWrapped = true;
+                    double column_width = instanceSheet.Cells.GetColumnWidth(instanceSheet.Cells[cell.Row, cell.Column].Column);
+                    string content = (instanceSheet.Cells[cell.Row, cell.Column].Value + "").Replace(" ", "_");
+                    double row_height_after = SandBox.Instance.GetFitedRowHeight(content, column_width) * 10 / 7.5;
+                    instanceSheet.Cells.SetRowHeight(cell.Row, row_height_after > 409 ? 409 : row_height_after);
+                }
+            }
+            //  背景色
+            if (cell_style.BackGroundColor.HasValue)
+            {
+                Cells celice = instanceSheet.Cells;
+                Style celicaStil = null;
+
+                celicaStil = celice[cell.Row, cell.Column].Style;
+                celicaStil.ForegroundColor = cell_style.BackGroundColor.Value;
+                celicaStil.Pattern = BackgroundType.Solid;
+                celice[cell.Row, cell.Column].Style = celicaStil;
+            }
+            //還原 Formatting Selected Characters in a Cell
+            //if (newValue.Length > 0)
+            //{
+            //    int x = ("[[" + dataTable.TableName + "]]").Length;
+            //    int y = dataTable.Rows[0][0].ToString().Length;
+            //    int z = 0;
+            //    for (int k = 0; k < ((cell.Value + "")).Length; k++)
+            //    {
+            //        if (newValue.IndexOf(dataTable.Rows[0][0].ToString(), k) == 0)
+            //        {
+            //            for(int j=k; j<(k+y); j++)
+            //                RestoreSelectedCharactersFormatting(cell.Characters(j, 1).Font, dicCharactersFormatting[vIndexs[z]]);
+
+            //            k = k+y;
+            //            z ++;
+            //        }
+            //        //else
+            //        //    RestoreSelectedCharactersFormatting(cell.Characters(k, 1).Font, dicCharactersFormatting[k + z * x]);
+            //    }
+            //}
+
+        }
+
         /// <summary>
         /// 以實值取代變數
         /// </summary>
@@ -471,7 +621,8 @@ namespace ReportHelper
                         //}
                         if (!string.IsNullOrEmpty(newValue))
                         {
-                            cell.PutValue(newValue);
+                            PutValue(cell, newValue, dataTable.Columns[0].DataType);
+                            //cell.PutValue(newValue);
                             //if ((cell.Value + "").Length != newValue.Length || (!(cell.Value + "").Equals(newValue)))
                             //    cell.PutValue(newValue);
                         }
@@ -489,71 +640,7 @@ namespace ReportHelper
                         }
                         if (cell_style != null)
                         {
-                            //  粗體
-                            instanceSheet.Cells[cell.Row, cell.Column].Style.Font.IsBold = cell_style.Bold;
-                            //  底線
-                            if (cell_style.Underline)
-                                instanceSheet.Cells[cell.Row, cell.Column].Style.Font.Underline = FontUnderlineType.Single;
-                            //  字體名稱
-                            if (!string.IsNullOrEmpty(cell_style.FontName))
-                                instanceSheet.Cells[cell.Row, cell.Column].Style.Font.Name = cell_style.FontName;
-                            //  字體大小
-                            if (cell_style.FontSize > 0)
-                                instanceSheet.Cells[cell.Row, cell.Column].Style.Font.Size = cell_style.FontSize;
-                            //  水平位置
-                            if (cell_style.HAlignment != null)
-                                instanceSheet.Cells[cell.Row, cell.Column].Style.HorizontalAlignment = cell_style.HAlignment.Value;
-                            //  垂直位置
-                            if (cell_style.VAlignment != null)
-                                instanceSheet.Cells[cell.Row, cell.Column].Style.VerticalAlignment = cell_style.VAlignment.Value;
-                            //  列高
-                            if (cell_style.RowHeight != null)
-                                instanceSheet.Cells.SetRowHeight(cell.Row, cell_style.RowHeight.Value);
-                            //  合併儲存格
-                            if (cell_style.MergeObject != null)
-                            {
-                                instanceSheet.Cells.Merge(cell.Row, cell.Column, cell_style.MergeObject.row_length, cell_style.MergeObject.column_length);
-                            }
-                            //  自動調整列高
-                            if (cell_style.AutoFitRow)
-                            {
-                                instanceSheet.Cells[cell.Row, cell.Column].Style.IsTextWrapped = true;
-                                double column_width = instanceSheet.Cells.GetColumnWidth(instanceSheet.Cells[cell.Row, cell.Column].Column);
-                                string content = (instanceSheet.Cells[cell.Row, cell.Column].Value + "").Replace(" ", "_");
-                                double row_height_after = SandBox.Instance.GetFitedRowHeight(content, column_width);
-                                instanceSheet.Cells.SetRowHeight(cell.Row, row_height_after * 10 / 7.5);
-                            }
-                            //  背景色
-                            if (cell_style.BackGroundColor != null)
-                            {
-                                Cells celice = instanceSheet.Cells;
-                                Style celicaStil = null;
-
-                                celicaStil = celice[cell.Row, cell.Column].Style;
-                                celicaStil.ForegroundColor = cell_style.BackGroundColor.Value; 
-                                celicaStil.Pattern = BackgroundType.Solid;
-                                celice[cell.Row, cell.Column].Style = celicaStil;
-                            }
-                            //還原 Formatting Selected Characters in a Cell
-                            //if (newValue.Length > 0)
-                            //{
-                            //    int x = ("[[" + dataTable.TableName + "]]").Length;
-                            //    int y = dataTable.Rows[0][0].ToString().Length;
-                            //    int z = 0;
-                            //    for (int k = 0; k < ((cell.Value + "")).Length; k++)
-                            //    {
-                            //        if (newValue.IndexOf(dataTable.Rows[0][0].ToString(), k) == 0)
-                            //        {
-                            //            for(int j=k; j<(k+y); j++)
-                            //                RestoreSelectedCharactersFormatting(cell.Characters(j, 1).Font, dicCharactersFormatting[vIndexs[z]]);
-
-                            //            k = k+y;
-                            //            z ++;
-                            //        }
-                            //        //else
-                            //        //    RestoreSelectedCharactersFormatting(cell.Characters(k, 1).Font, dicCharactersFormatting[k + z * x]);
-                            //    }
-                            //}
+                            SetCellStyle(instanceSheet, cell, cell_style);
                             continue;
                         }
                     }
@@ -588,87 +675,89 @@ namespace ReportHelper
 
                                 if (!string.IsNullOrEmpty(newValue))
                                 {
-                                    instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m].PutValue(newValue);
+                                    PutValue(instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m], newValue, dataTable.Columns[j].DataType);
+                                    //instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m].PutValue(newValue);
                                     //if ((instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m].Value + "").Length != newValue.Length || (!(instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m].Value + "").Equals(newValue)))
                                     //    instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m].PutValue(newValue);
                                 }
                                 if (cell_style != null)
                                 {
-                                    //  粗體
-                                    instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m].Style.Font.IsBold = cell_style.Bold;
-                                    //  底線
-                                    if (cell_style.Underline)
-                                        instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m].Style.Font.Underline = FontUnderlineType.Single;
-                                    //  字體名稱
-                                    if (!string.IsNullOrEmpty(cell_style.FontName))
-                                        instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m].Style.Font.Name = cell_style.FontName;
-                                    //  字體大小
-                                    if (cell_style.FontSize > 0)
-                                        instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m].Style.Font.Size = cell_style.FontSize;
-                                    //  水平位置
-                                    if (cell_style.HAlignment != null)
-                                        instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m].Style.HorizontalAlignment = cell_style.HAlignment.Value;
-                                    //  垂直位置
-                                    if (cell_style.VAlignment != null)
-                                        instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m].Style.VerticalAlignment = cell_style.VAlignment.Value;
-                                    //  列高
-                                    if (cell_style.RowHeight != null)
-                                        instanceSheet.Cells.SetRowHeight(cell.Row + i + n, cell_style.RowHeight.Value);
-                                    //  合併儲存格
-                                    if (cell_style.MergeObject != null)
-                                    {
-                                        instanceSheet.Cells.Merge(cell.Row + i + n, cell.Column + j + m, cell_style.MergeObject.row_length, cell_style.MergeObject.column_length);
-                                    }
+                                    SetCellStyle(instanceSheet, instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m], cell_style);
+                                    ////  粗體
+                                    //instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m].Style.Font.IsBold = cell_style.Bold;
+                                    ////  底線
+                                    //if (cell_style.Underline)
+                                    //    instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m].Style.Font.Underline = FontUnderlineType.Single;
+                                    ////  字體名稱
+                                    //if (!string.IsNullOrEmpty(cell_style.FontName))
+                                    //    instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m].Style.Font.Name = cell_style.FontName;
+                                    ////  字體大小
+                                    //if (cell_style.FontSize > 0)
+                                    //    instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m].Style.Font.Size = cell_style.FontSize;
+                                    ////  水平位置
+                                    //if (cell_style.HAlignment != null)
+                                    //    instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m].Style.HorizontalAlignment = cell_style.HAlignment.Value;
+                                    ////  垂直位置
+                                    //if (cell_style.VAlignment != null)
+                                    //    instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m].Style.VerticalAlignment = cell_style.VAlignment.Value;
+                                    ////  列高
+                                    //if (cell_style.RowHeight != null)
+                                    //    instanceSheet.Cells.SetRowHeight(cell.Row + i + n, cell_style.RowHeight.Value);
+                                    ////  合併儲存格
+                                    //if (cell_style.MergeObject != null)
+                                    //{
+                                    //    instanceSheet.Cells.Merge(cell.Row + i + n, cell.Column + j + m, cell_style.MergeObject.row_length, cell_style.MergeObject.column_length);
+                                    //}
                                     //  自動調整列高
-                                    if (cell_style.AutoFitRow)
-                                    {
-                                        if (cell_style.MergeObject != null)
-                                        {
-                                            Range merged_Range = instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m].GetMergedRange();
-                                            if (merged_Range != null)
-                                            {
-                                                double column_width = 0.0f;
-                                                for (int c = 0; c < merged_Range.ColumnCount; c++)
-                                                {
-                                                    column_width += merged_Range.Worksheet.Cells.GetColumnWidth(merged_Range.FirstColumn + c);
-                                                }
+                                    //if (cell_style.AutoFitRow)
+                                    //{
+                                    //    if (cell_style.MergeObject != null)
+                                    //    {
+                                    //        Range merged_Range = instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m].GetMergedRange();
+                                    //        if (merged_Range != null)
+                                    //        {
+                                    //            double column_width = 0.0f;
+                                    //            for (int c = 0; c < merged_Range.ColumnCount; c++)
+                                    //            {
+                                    //                column_width += merged_Range.Worksheet.Cells.GetColumnWidth(merged_Range.FirstColumn + c);
+                                    //            }
                                                 
-                                                instanceSheet.Cells.SetRowHeight(cell.Row + i + n, SandBox.Instance.GetFitedRowHeight(instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m].Value + "", column_width) * 10 / 7.5);
+                                    //            instanceSheet.Cells.SetRowHeight(cell.Row + i + n, SandBox.Instance.GetFitedRowHeight(instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m].Value + "", column_width) * 10 / 7.5);
 
-                                                //AutoFitRowByNPOI();
+                                    //            //AutoFitRowByNPOI();
 
-                                                Style style = instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m].Style;
-                                                style.IsTextWrapped = true;
-                                                StyleFlag sf = new StyleFlag();
-                                                sf.All = true;
-                                                merged_Range.ApplyStyle(style, sf);
-                                            }
-                                        }
-                                        else
-                                        {
-                                            //instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m].Style.IsTextWrapped = true;
-                                            //instanceSheet.AutoFitRow(cell.Row + i + n, 0, instanceSheet.Cells.MaxDataColumn);
-                                            //double row_height_after = instanceSheet.Cells.GetRowHeight(cell.Row + i + n);
-                                            //instanceSheet.Cells.SetRowHeight(cell.Row + i + n, row_height_after * 10 / 9.0);
+                                    //            Style style = instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m].Style;
+                                    //            style.IsTextWrapped = true;
+                                    //            StyleFlag sf = new StyleFlag();
+                                    //            sf.All = true;
+                                    //            merged_Range.ApplyStyle(style, sf);
+                                    //        }
+                                    //    }
+                                    //    else
+                                    //    {
+                                    //        //instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m].Style.IsTextWrapped = true;
+                                    //        //instanceSheet.AutoFitRow(cell.Row + i + n, 0, instanceSheet.Cells.MaxDataColumn);
+                                    //        //double row_height_after = instanceSheet.Cells.GetRowHeight(cell.Row + i + n);
+                                    //        //instanceSheet.Cells.SetRowHeight(cell.Row + i + n, row_height_after * 10 / 9.0);
 
-                                            instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m].Style.IsTextWrapped = true;
-                                            double column_width = instanceSheet.Cells.GetColumnWidth(instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m].Column);
-                                            string content = (instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m].Value + "").Replace(" ", "_");
-                                            double row_height_after = SandBox.Instance.GetFitedRowHeight(content, column_width);
-                                            instanceSheet.Cells.SetRowHeight(cell.Row + i + n, row_height_after * 10 / 7.5);
-                                        }
-                                    }
-                                    //  背景色
-                                    if (cell_style.BackGroundColor != null)
-                                    {
-                                        Cells celice = instanceSheet.Cells;
-                                        Style celicaStil = null;
+                                    //        instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m].Style.IsTextWrapped = true;
+                                    //        double column_width = instanceSheet.Cells.GetColumnWidth(instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m].Column);
+                                    //        string content = (instanceSheet.Cells[cell.Row + i + n, cell.Column + j + m].Value + "").Replace(" ", "_");
+                                    //        double row_height_after = SandBox.Instance.GetFitedRowHeight(content, column_width);
+                                    //        instanceSheet.Cells.SetRowHeight(cell.Row + i + n, row_height_after * 10 / 7.5);
+                                    //    }
+                                    //}
+                                    ////  背景色
+                                    //if (cell_style.BackGroundColor != null)
+                                    //{
+                                    //    Cells celice = instanceSheet.Cells;
+                                    //    Style celicaStil = null;
 
-                                        celicaStil = celice[cell.Row + i + n, cell.Column + j + m].Style;
-                                        celicaStil.ForegroundColor = cell_style.BackGroundColor.Value;                                         
-                                        celicaStil.Pattern = BackgroundType.Solid;
-                                        celice[cell.Row + i + n, cell.Column + j + m].Style = celicaStil;
-                                    }
+                                    //    celicaStil = celice[cell.Row + i + n, cell.Column + j + m].Style;
+                                    //    celicaStil.ForegroundColor = cell_style.BackGroundColor.Value;                                         
+                                    //    celicaStil.Pattern = BackgroundType.Solid;
+                                    //    celice[cell.Row + i + n, cell.Column + j + m].Style = celicaStil;
+                                    //}
                                 }
 
                                 // 若變數所在儲存格為合併儲存格，則 ColumnIndex 要增加

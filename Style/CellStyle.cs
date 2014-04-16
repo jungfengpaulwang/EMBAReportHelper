@@ -33,40 +33,34 @@ namespace ReportHelper
             get { return this.merge_object; }
         }
 
-        public bool Bold 
+        public bool? Bold 
         {
             private set { this.bold = value; } 
-            get { return (this.bold.HasValue) ? this.bold.Value : false; }
+            get { return this.bold; }
         }
 
-        public bool Underline
+        public bool? Underline
         {
             private set { this.underline = value; }
-            get { return (this.underline.HasValue) ? this.underline.Value : false; }
+            get { return this.underline; }
         }
 
-        public bool AutoFitRow
+        public bool? AutoFitRow
         {
             private set { this.auto_fit_row = value; }
-            get { return (this.auto_fit_row.HasValue) ? this.auto_fit_row.Value : false; }
+            get { return this.auto_fit_row; }
         }
 
         public string FontName
         {
             private set { this.font_name = value; }
-            get 
-            {
-                if (!string.IsNullOrWhiteSpace(this.font_name))
-                    return this.font_name;
-
-                return "新細明體"; 
-            }
+            get { return this.font_name; }
         }
 
-        public int FontSize
+        public int? FontSize
         {
             private set { this.font_size = value; }
-            get { return (this.font_size.HasValue) ? this.font_size.Value : 0; }
+            get { return this.font_size; }
         }
 
         public enum HorizontalAlignment { Left, Center, Right };
