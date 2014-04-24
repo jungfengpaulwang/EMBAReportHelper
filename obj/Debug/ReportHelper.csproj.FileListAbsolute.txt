@@ -18,3 +18,4 @@ E:\github\NTU_EMBA\ReportHelper\bin\Debug\ReportHelper.dll
 E:\github\NTU_EMBA\ReportHelper\bin\Debug\ReportHelper.pdb
 E:\github\NTU_EMBA\ReportHelper\obj\Debug\ReportHelper.dll
 E:\github\NTU_EMBA\ReportHelper\obj\Debug\ReportHelper.pdb
+E:\github\NTU_EMBA\ReportHelper\obj\Debug\ReportHelper.csprojResolveAssemblyReference.cache
